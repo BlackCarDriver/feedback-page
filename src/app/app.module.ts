@@ -3,11 +3,13 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule} from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { FbpageComponent } from './fbpage/fbpage.component';
+import { FbshowComponent } from './fbshow/fbshow.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    FbpageComponent
+    FbpageComponent,
+    FbshowComponent
   ],
   imports: [
     BrowserModule,
