@@ -1,27 +1,16 @@
 # Feedback
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.1.0.
+这是一个反馈组件。
 
-## Development server
+前端使用Angular, 包含一个提交反馈页面组件和一个查看反馈页面，纯css 和 typescript。稍加修改后即可当作组件迁移到其他项目当中使用。后端使用golang。主要完成接收反馈数据，返回反馈数据的工作。数据库使用postgres。
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+**提交反馈页面：**
 
-## Code scaffolding
+![feedback](./images/feedback.PNG)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+**显示反馈数据页面：**
 
-## Build
+![feedbackshow](./images/feedbackshow.PNG)
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+![fbshow2](./images/fbshow2.PNG)
 
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).

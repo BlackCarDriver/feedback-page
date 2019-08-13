@@ -9,34 +9,34 @@
         <div class="datalist">
             <table class="mytable">
                 <tr class="tablehead">
-                    <th width="10%">反馈ID</th>
-                    <th width="10%"> 反馈时间</th>
+                    <th width="4%">ID</th>
+                    <th width="13%"> 反馈时间</th>
                     <th width="10%">问题类型</th>
                     <th width="25%">用户ID</th>
                     <th width="30%">发生位置</th>
-                    <th width="5%">状态</th>
+                    <th width="8%">状态</th>
                     <th width="10%">查看</th>
                 </tr>
-                <tr class="tablerows" *ngFor="let row of mockdata">
+                <tr class="tablerows" *ngFor="let row of fbdata">
                     <td>{{row.id}}</td>
-                    <td>{{row.time}}</td>
+                    <td>{{row.time | date:'yyyy-MM-dd HH:mm'}}</td>
                     <td>{{row.pbtype}}</td>
                     <td>{{row.userid}}</td>
                     <td>{{row.location}}</td>
-                    <td>{{row.state}}</td>
-                    <td><a class="btn gradually">查看</a></td>
+                    <td [class.newFb]="row.state==0" [class.oldFb]="row.state==1">{{row.state==1?'已看':'未看'}}</td>
+                    <td><a class="btn gradually" (click)="setUpDesPanCont(row.imgurl, row.describe);updateState(row.id);">查看</a></td>
                 </tr>
             </table>
         </div>
 
-        <div class="detailpan full">
+        <div class="detailpan full gradually" id="showPan">
             <div class="midpan">
-                <div class="midpan-header gradually">
-                    <button class="returnbtn ">返回</button>
+                <div class="midpan-header">
+                    <button class="returnbtn " (click)="hideDesPan();">返回</button>
                 </div>
                 <p>上传的图片:</p>
                 <div class="imgbox">
-                    <img src="{{targetImg}}" alt="反馈图片">
+                    <img [src]="targetImg" alt="{{targetImg}}">
                 </div>
                 <p>详细描述:</p>
                 <div class="describe">
@@ -48,9 +48,9 @@
     </div>
 
     <div class="pagbtnbox gradually">
-        <div class="pagebtn pre" *ngIf="presentPage> 1"></div>
-        <span>总页数：{{pageNumber}}, 当前页数：{{presentPage}}</span>
-        <div class="pagebtn next" *ngIf="presentPage <pageNumber"></div>
+        <div class="pagebtn pre" *ngIf="presentPage> 1" (click)="leastPage()"></div>
+        <span>总页数：{{pageNumber| number:'1.0-0'}}, 当前页数：{{presentPage}}</span>
+        <div class="pagebtn next" *ngIf="presentPage <pageNumber" (click)="nextPage()"></div>
     </div>
 
 </div>

@@ -3,6 +3,10 @@
 	background-image: url("../../images/fbbackground.jpg") ;
     background-size:cover;
     display: flow-root;
+    
+    /* background: linear-gradient(#64c4ed, #4f81c7);
+    min-height: 700px;
+    display: flow-root; */
 }
 .header {
     text-align: center;

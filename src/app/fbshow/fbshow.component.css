@@ -48,6 +48,13 @@
     text-align: center;
 }
 
+.newFb{
+    color: #f43636;
+}
+.oldFb{
+    color: #12a409ba;
+}
+
 .tablehead {
     border-bottom: 2px solid rgba(0, 0, 0, .12);
     color: rgba(0, 0, 0, .54);
@@ -118,6 +125,7 @@
     z-index: 50;
     overflow: hidden;
     background-color: #0000003b;
+    display: none;
 }
 
 .midpan {

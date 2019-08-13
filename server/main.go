@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"math/rand"
 	"mime/multipart"
 	"net/http"
@@ -23,15 +24,24 @@ func init() {
 	fbImgDir = "./fbimages"
 }
 
-// the feedback result strcut return to user
-type fbStatus struct {
+//feedback result or update state result
+type fbResult struct {
 	Status   bool   `json:"status"`
 	Describe string `json:"descirbe"`
 }
 
+//get data result
+type gdResult struct {
+	Status   bool        `json:"status"`
+	Describe string      `json:"descirbe"`
+	Sum      int         `json:"sum"`
+	Data     interface{} `json:"data"`
+}
+
 func main() {
 	http.HandleFunc("/feedback/postfeedback", FeedBackHandle)
-	http.HandleFunc("/", Test)
+	http.HandleFunc("/feedback/getdata", GetFeedBackData)
+	http.HandleFunc("/feedback/readfb", UpdateFbState)
 	fmt.Println("the server is running...")
 	err := http.ListenAndServe("localhost:4700", nil)
 	if err != nil {
@@ -39,16 +49,13 @@ func main() {
 	}
 }
 
-func Test(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("...")
-}
-
+//receive feedback data and save into database
 func FeedBackHandle(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("AllowMethods", "POST")
 	w.Header().Set("content-type", "application/json; charset=utf-8")
 	var err error
-	result := fbStatus{}
+	result := fbResult{}
 	fbdata := model.FeedBackData{}
 
 	err = r.ParseMultipartForm(5 << 20)
@@ -127,6 +134,82 @@ tail:
 	}
 }
 
+//return some feedback data
+func GetFeedBackData(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("AllowMethods", "POST")
+	w.Header().Set("content-type", "application/json; charset=utf-8")
+	var err error
+	var data *[]model.FeedBackData
+	result := gdResult{}
+	body := getBodyData(r)
+	count := 0
+	offset, ok := body["offset"].(float64)
+	if !ok {
+		result.Status = false
+		result.Describe = fmt.Sprintf("Can't get offset from  post body")
+		goto tail
+	}
+	count, err = model.CountFbRecord()
+	if err != nil {
+		result.Status = false
+		result.Describe = fmt.Sprintf("Can't get rows number: %v", err)
+		goto tail
+	}
+	result.Sum = count
+	data, err = model.GetFeedBack(int(offset))
+	if err != nil {
+		result.Status = false
+		result.Describe = fmt.Sprintf("Get Feedback Data fail: %v", err)
+		goto tail
+	}
+	result.Data = *data
+	result.Status = true
+tail:
+	if result.Status == false {
+		fmt.Println(result.Describe)
+	}
+	jsonResp, _ := json.Marshal(result)
+	_, err = w.Write(jsonResp)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+//set a feedback record's state to 1 which mean it record have been read
+func UpdateFbState(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("AllowMethods", "POST")
+	w.Header().Set("content-type", "application/json; charset=utf-8")
+	body := getBodyData(r)
+	var err error
+	fbid, ok := body["fbid"].(float64)
+	result := fbResult{}
+	if !ok {
+		result.Status = false
+		result.Describe = "Can't get feedback id from request body"
+		goto tail
+	}
+	err = model.UpdateState(int(fbid))
+	if err != nil {
+		result.Status = false
+		result.Describe = fmt.Sprintf("Update database fail: %v", err)
+		goto tail
+	}
+	result.Status = true
+tail:
+	if result.Status == false {
+		fmt.Println(result.Describe)
+	}
+	jsonResp, _ := json.Marshal(result)
+	_, err = w.Write(jsonResp)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+//######################### tools funciton #############################
+
 func checkFbData(data *model.FeedBackData) string {
 	if data.UserId == "" {
 		return "Userid not found!"
@@ -162,4 +245,17 @@ func GetRandomString(l int) string {
 		result = append(result, bytes[r.Intn(len(bytes))])
 	}
 	return string(result)
+}
+
+func getBodyData(r *http.Request) (data map[string]interface{}) {
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		fmt.Println(err)
+	}
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return
 }

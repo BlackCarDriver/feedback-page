@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient,HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-fbpage',
@@ -59,8 +59,20 @@ export class FbpageComponent implements OnInit {
     input.append('describe', describe);
 
     let feedbackUrl = this.server +"/feedback/postfeedback";
-    let response = this.http.post<string>(feedbackUrl, input);
-    response.subscribe(result=>{alert(result);});
+    let response = this.http.post<result>(feedbackUrl, input);
+    response.subscribe(result=>{
+        if (result.status==true) {
+            alert("反馈成功！");
+        }else{
+            alert("反馈失败："+result.describe);
+        }
+    });
   }
 
+}
+
+
+type result = {
+  status :boolean;
+  describe:string;
 }

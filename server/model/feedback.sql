@@ -1,5 +1,6 @@
 CREATE TABLE public.t_feedback
 (
+  id  SERIAL primary key ,   
   openid character(100),
   pblocation character(300), -- The location of the problem
   fbtype character(100), -- type of feedback 
