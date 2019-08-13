@@ -1,57 +1,65 @@
 <div class="fbbody">
     <!---header--->
-<div class="header">
-    <h1>问题反馈</h1>
-</div>
-<!---header--->
-<!---main--->
-<div class="main-content">
-    <div class="contact-w3">
-        <form (ngsubmit)="commit()" id="fbform" target="nm_iframe" method="POST" enctype="multipart/form-data" >
-            <div class="contact-left-w3">
-                <label>问题类型</label>
-                <select id="fbtype" class="typeselect">
-                    <option value="其他">其他</option>
-                    <option value="登录问题">登录问题</option>
-                    <option value="题目显示">题目显示</option>
-                    <option value="答案提交">答案提交</option>
-                    <option value="答案误判">答案误判</option>
-                    <option value="无法访问">无法访问</option>
-                </select>
-            </div>
+    <div class="header">
+        <h1>问题反馈</h1>
+    </div>
+    <!---header--->
+    <!---main--->
+    <div class="main-content">
+        <div class="contact-w3">
+            <form (ngsubmit)="commit()" id="fbform" target="nm_iframe"
+                method="POST" enctype="multipart/form-data">
+                <div class="contact-left-w3">
+                    <label>问题类型</label>
+                    <select id="fbtype" class="typeselect">
+                        <option value="其他">其他</option>
+                        <option value="登录问题">登录问题</option>
+                        <option value="题目显示">题目显示</option>
+                        <option value="答案提交">答案提交</option>
+                        <option value="答案误判">答案误判</option>
+                        <option value="无法访问">无法访问</option>
+                    </select>
+                </div>
 
-            <!-- <div class="contact-right-w3l">
-                <label (click)="commit()">问题位置</label>
-                <input type="text" name="Name" id="fblocation" placeholder="请告诉我们问题出现的页面和位置" pattern=".{5,100}" oninvalid="setCustomValidity('输入太短或太长')"  oninput="setCustomValidity('')" required/>
+                <div class="contact-right-w3l">
+                    <label>问题位置</label>
+                    <input type="text" name="Name" id="fblocation"
+                        placeholder="请告诉我们问题出现的页面和位置" pattern=".{5,100}"
+                        oninvalid="setCustomValidity('输入太短或太长')"
+                        oninput="setCustomValidity('')" required/>
 
-                <div class="row">
-                    <label>你的邮箱</label>
-                        <input type="email" name="Email" id="fbemail" placeholder="请留下你的邮箱方便我们回复" oninvalid="setCustomValidity('请输入正确的邮箱格式')"  oninput="setCustomValidity('')" required>
+                    <div class="row">
+                        <label>你的邮箱</label>
+                        <input type="email" name="Email" id="fbemail"
+                            placeholder="请留下你的邮箱方便我们回复"
+                            oninvalid="setCustomValidity('请输入正确的邮箱格式')"
+                            oninput="setCustomValidity('')">
                     </div>
                     <div class="clear"></div>
-            </div> -->
+                </div>
 
-            <div class="row">
-                <label>上传截图</label>
-                <input type="file" name="screenshot" id="inputfile" accept="image/png,image/jpg,image/jpeg,image/PNG,image/JPG">
-                <label for="inputfile" id="selectImg">选择文件</label>
-                <p>{{selectFileName}}</p>
-            </div>
+                <div class="row">
+                    <label>上传截图</label>
+                    <input type="file" name="screenshot" id="inputfile"
+                        accept="image/png,image/jpg,image/jpeg,image/PNG,image/JPG">
+                    <label for="inputfile" id="selectImg">选择文件</label>
+                    <p>{{selectFileName}}</p>
+                </div>
 
-            <div class="row1">
-                <label>详细描述</label>
-                <textarea id="fbdescribe" placeholder="请详细描述描述出现的错误，例如发生的经过"
-                    name="Message" pattern=".{5,500}"
-                    oninvalid="setCustomValidity('描述太短或太长')"
-                    oninput="setCustomValidity('')" required></textarea>
-            </div>
-            <button type="submit" id="submit">提交</button>
-        </form>
-        <iframe id="id_iframe" name="nm_iframe" style="display:none;"></iframe>
+                <div class="row1">
+                    <label>详细描述</label>
+                    <textarea id="fbdescribe" placeholder="请详细描述描述出现的错误，例如发生的经过"
+                        name="Message" pattern=".{5,500}"
+                        oninvalid="setCustomValidity('描述太短或太长')"
+                        oninput="setCustomValidity('')" required></textarea>
+                </div>
+                <button type="submit" id="submit">提交</button>
+            </form>
+            <iframe id="id_iframe" name="nm_iframe" style="display:none;"></iframe>
+        </div>
     </div>
-</div>
 
-<div class="footer-w3-agile">
-    <!-- <p>&copy 2018 Temper Contact Form . All rights reserved | Design by W3layouts</p> -->
-</div>
+    <div class="footer-w3-agile">
+        <!-- <p>&copy 2018 Temper Contact Form . All rights reserved | Design by W3layouts</p> -->
+    </div>
 </div>

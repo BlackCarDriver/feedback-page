@@ -16,14 +16,15 @@ const (
 )
 
 type FeedBackData struct {
-	FbId     int64     `json:"id"`
-	FbTime   time.Time `json:"time"`
-	FbState  int64     `json:"state"`
+	Id       int64     `json:"id"`
 	UserId   string    `json:"userid"`
-	Location string    `json:"location"` //Where the problem occurred
+	Email    string    `json:"email"`
+	Time     time.Time `json:"time"`
+	Status   int64     `json:"state"`
 	Type     string    `json:"pbtype"`
-	Images   string    `json:"imgurl"` //screenshot saving name
+	Location string    `json:"location"` //Where the problem occurred
 	Describe string    `json:"describe"`
+	Imgurl   string    `json:"imgurl"` //screenshot saving name
 }
 
 func init() {
@@ -37,13 +38,13 @@ func init() {
 	fmt.Println("Database Connect Scuess!")
 }
 
-//insert a feedback record into database, time and state will set up by default value.
-func SaveFeedBack(data *FeedBackData) error {
-	if data == nil {
+//insert a feedback record into dbase, time and state will set up by default value.
+func SaveFeedBack(d *FeedBackData) error {
+	if d == nil {
 		return fmt.Errorf("Receive a null pointer!")
 	}
-	insertTP := `INSERT INTO public.t_feedback(openid, pblocation, fbtype, images, describe)VALUES ($1,$2,$3,$4,$5);`
-	res, err := db.Exec(insertTP, data.UserId, data.Location, data.Type, data.Images, data.Describe)
+	insertTP := `INSERT INTO public.t_feedback2(user_id, fb_location, fb_type, images_name, describe, email)VALUES ($1,$2,$3,$4,$5,$6);`
+	res, err := db.Exec(insertTP, d.UserId, d.Location, d.Type, d.Imgurl, d.Describe, d.Email)
 	if err != nil {
 		return err
 	}
@@ -59,7 +60,7 @@ func GetFeedBack(offset int) (*[]FeedBackData, error) {
 	if offset < 0 {
 		return nil, fmt.Errorf("Offset can't small than 0!")
 	}
-	selectTP := `SELECT id, openid, pblocation, fbtype, images, describe, fbtime, fbstate FROM public.t_feedback order by fbtime desc limit 12 offset $1;`
+	selectTP := `SELECT id, user_id, fb_location, fb_type, images_name, describe, fb_time, fb_status, email  FROM public.t_feedback2 order by fb_time desc limit 12 offset $1;`
 	rows, err := db.Query(selectTP, offset)
 	if err != nil {
 		return nil, err
@@ -68,11 +69,12 @@ func GetFeedBack(offset int) (*[]FeedBackData, error) {
 	data := make([]FeedBackData, 0)
 	for rows.Next() {
 		t := FeedBackData{}
-		err = rows.Scan(&t.FbId, &t.UserId, &t.Location, &t.Type, &t.Images, &t.Describe, &t.FbTime, &t.FbState)
+		imgName := ""
+		err = rows.Scan(&t.Id, &t.UserId, &t.Location, &t.Type, &imgName, &t.Describe, &t.Time, &t.Status, &t.Email)
 		if err != nil {
 			return nil, fmt.Errorf("Error when scan from rows: %v", err)
 		}
-		t.Images = fbimgPath + t.Images
+		t.Imgurl = fbimgPath + imgName
 		data = append(data, t)
 	}
 	return &data, nil
@@ -83,14 +85,14 @@ func UpdateState(fbid int) error {
 	if fbid < 0 {
 		return fmt.Errorf("Receive a numebr small than 0!")
 	}
-	updateTP := `update t_feedback set fbstate=1 where id=$1`
+	updateTP := `update t_feedback2 set fb_status=1 where id=$1`
 	_, res := db.Exec(updateTP, fbid)
 	return res
 }
 
 //count how many feedback record have save in database
 func CountFbRecord() (int, error) {
-	countTP := `select count(*) from t_feedback;`
+	countTP := `select count(*) from t_feedback2;`
 	row := db.QueryRow(countTP)
 	count := 0
 	err := row.Scan(&count)

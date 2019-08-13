@@ -13,6 +13,8 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/astaxie/beego/logs"
+
 	"./model"
 )
 
@@ -27,13 +29,13 @@ func init() {
 //feedback result or update state result
 type fbResult struct {
 	Status   bool   `json:"status"`
-	Describe string `json:"descirbe"`
+	Describe string `json:"describe"`
 }
 
 //get data result
 type gdResult struct {
 	Status   bool        `json:"status"`
-	Describe string      `json:"descirbe"`
+	Describe string      `json:"describe"`
 	Sum      int         `json:"sum"`
 	Data     interface{} `json:"data"`
 }
@@ -43,7 +45,7 @@ func main() {
 	http.HandleFunc("/feedback/getdata", GetFeedBackData)
 	http.HandleFunc("/feedback/readfb", UpdateFbState)
 	fmt.Println("the server is running...")
-	err := http.ListenAndServe("localhost:4700", nil)
+	err := http.ListenAndServe("localhost:4747", nil)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -68,15 +70,16 @@ func FeedBackHandle(w http.ResponseWriter, r *http.Request) {
 
 	//get feedback data from postbody and check the value latter
 	fbdata.Type = getMultipartFormValue(r.MultipartForm, "type")
+	fbdata.Email = getMultipartFormValue(r.MultipartForm, "email")
 	fbdata.UserId = getMultipartFormValue(r.MultipartForm, "userid")
 	fbdata.Location = getMultipartFormValue(r.MultipartForm, "location")
 	fbdata.Describe = getMultipartFormValue(r.MultipartForm, "describe")
-	if checkRes := checkFbData(&fbdata); checkRes != "" {
+	if checkRes := checkFbData(&fbdata); checkRes != "" { //Email and imgfile can ignore, other must have
 		result.Status = false
 		result.Describe = fmt.Sprintf("The feedback received data was incomplete: %s", checkRes)
 		goto tail
 	}
-
+	fmt.Println(fbdata)
 	//handle the uploaded screenshot images if have
 	if imgs, _ := r.MultipartForm.File["images"]; len(imgs) > 0 {
 		img := imgs[0]
@@ -113,13 +116,13 @@ func FeedBackHandle(w http.ResponseWriter, r *http.Request) {
 		}
 		io.Copy(cur, tmpfile)
 		cur.Close()
-		fbdata.Images = newFileName
-		fmt.Println(size, newFileName)
+		fbdata.Imgurl = newFileName
 	}
 
+	//save a record into database
 	err = model.SaveFeedBack(&fbdata)
 	if err != nil {
-		fmt.Println(err)
+		logs.Error(err)
 	}
 
 	result.Status = true
@@ -130,7 +133,7 @@ tail:
 	jsonResp, _ := json.Marshal(result)
 	_, err = w.Write(jsonResp)
 	if err != nil {
-		fmt.Println(err)
+		logs.Error(err)
 	}
 }
 
@@ -210,6 +213,7 @@ tail:
 
 //######################### tools funciton #############################
 
+//check some value in FeedBackData
 func checkFbData(data *model.FeedBackData) string {
 	if data.UserId == "" {
 		return "Userid not found!"

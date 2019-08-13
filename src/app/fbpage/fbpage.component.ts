@@ -13,9 +13,8 @@ export class FbpageComponent implements OnInit {
   constructor(private http: HttpClient) { }
   
   userid = "temp userid";    //user's open id, get from other page
-  location = "temp location";  //where the problem come from, get from other page
   selectFileName = "未选择任意图片...";  //the name of images which is going upload 
-  server = "http://localhost:4700"
+  server = "/server"
 
   ngOnInit() {
     var inputs = document.getElementById('inputfile');
@@ -30,12 +29,14 @@ export class FbpageComponent implements OnInit {
   }
 
   commit(){
+    //get value from from
     let type =  (<HTMLInputElement>document.getElementById('fbtype')).value;
-    // let location =  (<HTMLInputElement>document.getElementById('fblocation')).value;
-    // let email =  (<HTMLInputElement>document.getElementById('fbemail')).value;
+    let location =  (<HTMLInputElement>document.getElementById('fblocation')).value;
+    let email =  (<HTMLInputElement>document.getElementById('fbemail')).value;
     let describe =  (<HTMLInputElement>document.getElementById('fbdescribe')).value;
     let fileName =  (<HTMLInputElement>document.getElementById('inputfile')).value;
     let images : any
+    // check file input legal
     const fileNameReg = /(!?)^.*\.(jpg)|(png)|(jpeg)$/;
     if( fileName!=""){
       if (fileNameReg.test(fileName)==false ){
@@ -50,14 +51,15 @@ export class FbpageComponent implements OnInit {
        }
        images =  (<HTMLInputElement>document.getElementById('inputfile')).files[0];
     }
-
+    //post data composition
     let input = new FormData();
-    input.append('userid', this.userid);
-    input.append('location', this.location);
+    input.append('userid', this.userid); 
     input.append('type', type);
+    input.append('location', location);
+    input.append('email', email);
     input.append('images', images);
     input.append('describe', describe);
-
+    //post feedback data
     let feedbackUrl = this.server +"/feedback/postfeedback";
     let response = this.http.post<result>(feedbackUrl, input);
     response.subscribe(result=>{

@@ -13,7 +13,7 @@
                     <th width="13%"> 反馈时间</th>
                     <th width="10%">问题类型</th>
                     <th width="25%">用户ID</th>
-                    <th width="30%">发生位置</th>
+                    <th width="30%">用户邮箱</th>
                     <th width="8%">状态</th>
                     <th width="10%">查看</th>
                 </tr>
@@ -22,9 +22,9 @@
                     <td>{{row.time | date:'yyyy-MM-dd HH:mm'}}</td>
                     <td>{{row.pbtype}}</td>
                     <td>{{row.userid}}</td>
-                    <td>{{row.location}}</td>
+                    <td>{{row.email}}</td>
                     <td [class.newFb]="row.state==0" [class.oldFb]="row.state==1">{{row.state==1?'已看':'未看'}}</td>
-                    <td><a class="btn gradually" (click)="setUpDesPanCont(row.imgurl, row.describe);updateState(row.id);">查看</a></td>
+                    <td><a class="btn gradually" (click)="setUpDesPanCont(row.imgurl, row.describe, row.location);updateState(row.id);">查看</a></td>
                 </tr>
             </table>
         </div>
@@ -37,6 +37,10 @@
                 <p>上传的图片:</p>
                 <div class="imgbox">
                     <img [src]="targetImg" alt="{{targetImg}}">
+                </div>
+                <p>问题位置:</p>
+                <div class="describe">
+                    {{location}}
                 </div>
                 <p>详细描述:</p>
                 <div class="describe">

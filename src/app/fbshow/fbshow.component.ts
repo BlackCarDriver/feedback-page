@@ -13,7 +13,8 @@ export class FbshowComponent implements OnInit {
   presentPage = 1;
   targetImg = "";
   describe = "";
-  server = "http://localhost:4700"
+  location = "";
+  server = "/server"
   fbdata: rows[] = [];
 
   constructor(private http: HttpClient) { }
@@ -62,9 +63,10 @@ export class FbshowComponent implements OnInit {
 
   //####################### tools function ############################
 
-  setUpDesPanCont(imgurl: string, describe: string) {
+  setUpDesPanCont(imgurl: string, describe: string, location:string) {
     this.targetImg = imgurl;
     this.describe = describe;
+    this.location = location;
     this.showDesPan();
   }
   hideDesPan() {
@@ -93,11 +95,12 @@ type result2 = {
 
 type rows = {
   id: number;
-  time: string;
   userid: string;
+  email:string;
+  time: string;
+  state: number;
   pbtype: string;
   location: string;
-  state: number;
-  imgurl: string;
   describe: string;
+  imgurl: string;
 }
