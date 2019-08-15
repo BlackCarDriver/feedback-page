@@ -114,7 +114,13 @@ func FeedBackHandle(w http.ResponseWriter, r *http.Request) {
 			result.Describe = fmt.Sprintf("Save images faill! :%v", err)
 			goto tail
 		}
-		io.Copy(cur, tmpfile)
+		_, err = io.Copy(cur, tmpfile)
+		if err != nil {
+			logs.Error("Save images fail: %v", err)
+			result.Status = false
+			result.Describe = fmt.Sprintf("Can't save upload file: %v", err)
+			goto tail
+		}
 		cur.Close()
 		fbdata.Imgurl = newFileName
 	}

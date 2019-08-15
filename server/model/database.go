@@ -29,7 +29,9 @@ type FeedBackData struct {
 
 func init() {
 	var err error
-	confstr := fmt.Sprintf()
+	confstr := fmt.Sprintf(
+		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+	)
 	db, err = sql.Open("postgres", confstr)
 	err = db.Ping()
 	if err != nil {
